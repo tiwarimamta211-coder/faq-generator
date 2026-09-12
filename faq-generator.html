@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI FAQ Generator — IncomeAIHub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05050b;
+    --panel:#0c0c18;
+    --panel-2:#10101f;
+    --line:#22223a;
+    --cyan:#00f0ff;
+    --purple:#a742ff;
+    --green:#39ff88;
+    --text:#e6e6f0;
+    --muted:#8888a4;
+    --danger:#ff4d6d;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Rajdhani',sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    position:relative;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9999;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.018) 0px,
+      rgba(255,255,255,0.018) 1px,
+      transparent 2px,
+      transparent 3px
+    );
+    mix-blend-mode:overlay;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9998;
+    background:radial-gradient(ellipse at 50% 0%, rgba(0,240,255,0.06), transparent 60%);
+  }
+  h1,h2,h3{
+    font-family:'Orbitron',sans-serif;
+    margin:0;
+    letter-spacing:0.02em;
+  }
+  a{color:var(--cyan);}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 20px;}
+
+  header{
+    border-bottom:1px solid var(--line);
+    padding:18px 0;
+    position:sticky;top:0;
+    background:rgba(5,5,11,0.92);
+    backdrop-filter:blur(6px);
+    z-index:100;
+  }
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:baseline;gap:10px;}
+  .brand h1{font-size:20px;color:var(--text);}
+  .brand h1 span{color:var(--cyan);}
+  .brand small{font-family:'Share Tech Mono',monospace;color:var(--muted);font-size:12px;}
+  .hub-link{
+    font-family:'Share Tech Mono',monospace;
+    font-size:12px;
+    color:var(--muted);
+    text-decoration:none;
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius:var(--radius);
+  }
+  .hub-link:hover{border-color:var(--cyan);color:var(--cyan);}
+
+  .hero{padding:36px 0 8px;}
+  .hero p{color:var(--muted);max-width:640px;font-size:15px;}
+  .hero h2{font-size:clamp(24px,4vw,34px);color:var(--text);}
+  .hero h2 em{font-style:normal;color:var(--green);}
+
+  .ad-slot{
+    border:1px dashed var(--line);
+    color:var(--muted);
+    font-family:'Share Tech Mono',monospace;
+    font-size:11px;
+    text-align:center;
+    padding:10px;
+    margin:20px 0;
+    letter-spacing:0.08em;
+  }
+
+  main{padding:20px 0 60px;}
+  .grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
+  @media (max-width:920px){
+    .grid{grid-template-columns:1fr;}
+  }
+
+  .panel{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:20px;
+  }
+  .panel-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:16px;
+    gap:10px;flex-wrap:wrap;
+  }
+  .panel-head h3{font-size:15px;color:var(--cyan);}
+  .panel-head .tag{
+    font-family:'Share Tech Mono',monospace;
+    font-size:10px;color:var(--muted);
+    border:1px solid var(--line);
+    padding:3px 8px;border-radius:var(--radius);
+  }
+
+  label{
+    display:block;font-size:13px;color:var(--muted);
+    margin-bottom:6px;font-weight:600;letter-spacing:0.02em;
+  }
+  input[type=text],input[type=number],input[type=password],textarea,select{
+    width:100%;
+    background:#08080f;
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:10px 12px;
+    font-family:'Rajdhani',sans-serif;
+    font-size:15px;
+    border-radius:var(--radius);
+    outline:none;
+    resize:vertical;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--cyan);}
+  .field{margin-bottom:14px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){.row2{grid-template-columns:1fr;}}
+
+  button{
+    font-family:'Rajdhani',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.03em;
+    cursor:pointer;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    background:#0c0c18;
+    color:var(--text);
+    padding:10px 16px;
+    transition:border-color .15s, color .15s, transform .05s;
+  }
+  button:hover{border-color:var(--cyan);color:var(--cyan);}
+  button:active{transform:scale(0.98);}
+  button.primary{
+    background:linear-gradient(90deg,var(--cyan),var(--purple));
+    color:#05050b;border:none;
+  }
+  button.primary:hover{filter:brightness(1.1);color:#05050b;}
+  button.ghost{background:transparent;}
+  button.danger{border-color:var(--danger);color:var(--danger);}
+  button.danger:hover{background:var(--danger);color:#05050b;}
+  button:disabled{opacity:0.5;cursor:not-allowed;}
+  button.small{padding:6px 10px;font-size:12px;}
+
+  .advanced-toggle{
+    font-family:'Share Tech Mono',monospace;
+    font-size:12px;color:var(--muted);
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
+    margin-bottom:10px;
+  }
+  .advanced-box{display:none;border-top:1px solid var(--line);padding-top:14px;margin-top:6px;}
+  .advanced-box.open{display:block;}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;}
+  .hint a{color:var(--purple);}
+
+  .faq-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:12px;
+    background:#08080f;
+  }
+  .faq-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;}
+  .faq-index{
+    font-family:'Share Tech Mono',monospace;
+    color:var(--purple);font-size:12px;
+  }
+  .faq-actions{display:flex;gap:6px;}
+  .faq-actions button{padding:5px 8px;font-size:11px;}
+  .empty-state{
+    text-align:center;color:var(--muted);
+    padding:30px 10px;font-family:'Share Tech Mono',monospace;
+    font-size:13px;border:1px dashed var(--line);border-radius:var(--radius);
+  }
+
+  .accordion-item{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
+  .accordion-q{
+    padding:12px 14px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;
+    background:#0a0a14;font-weight:600;font-size:15px;
+  }
+  .accordion-q:hover{color:var(--cyan);}
+  .accordion-q .chevron{color:var(--green);font-family:'Share Tech Mono',monospace;transition:transform .15s;}
+  .accordion-item.open .chevron{transform:rotate(45deg);}
+  .accordion-a{
+    max-height:0;overflow:hidden;
+    transition:max-height .2s ease, padding .2s ease;
+    padding:0 14px;color:var(--muted);font-size:14px;
+    border-top:0 solid var(--line);
+  }
+  .accordion-item.open .accordion-a{
+    max-height:600px;padding:12px 14px 16px;border-top:1px solid var(--line);
+  }
+
+  .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .tabs button{flex:1;min-width:100px;}
+  .tabs button.active{border-color:var(--green);color:var(--green);}
+  pre{
+    background:#050508;border:1px solid var(--line);
+    padding:14px;border-radius:var(--radius);
+    font-family:'Share Tech Mono',monospace;font-size:12px;
+    color:var(--green);
+    overflow:auto;max-height:340px;white-space:pre-wrap;word-break:break-word;
+  }
+  .export-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+
+  .status{
+    font-family:'Share Tech Mono',monospace;font-size:12px;
+    margin-top:10px;min-height:16px;
+  }
+  .status.ok{color:var(--green);}
+  .status.err{color:var(--danger);}
+  .status.busy{color:var(--cyan);}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-top:6px;}
+  .guide h3{color:var(--purple);font-size:17px;margin-bottom:12px;}
+  .guide ol{margin:0;padding-left:20px;color:var(--text);}
+  .guide li{margin-bottom:10px;}
+  .guide .hin{color:var(--muted);font-size:14px;}
+
+  footer{border-top:1px solid var(--line);padding:24px 0;text-align:center;color:var(--muted);font-size:12px;font-family:'Share Tech Mono',monospace;}
+
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-track{background:#08080f;}
+  ::-webkit-scrollbar-thumb{background:var(--line);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <h1>FAQ <span>Generator</span></h1>
+      <small>IncomeAIHub Tools</small>
+    </div>
+    <a class="hub-link" href="#">&larr; Back to IncomeAIHub</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="ad-slot">AD SLOT — 728x90 — GOOGLE ADSENSE</div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <h2>Build FAQ sections that <em>rank</em>, in minutes.</h2>
+    <p>Add your own questions or let AI draft them from a topic, preview the accordion live, then copy ready-to-paste HTML and Schema.org FAQPage markup for Google rich results.</p>
+  </div>
+</section>
+
+<main>
+  <div class="wrap grid">
+
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>⚡ AI FAQ Drafting</h3>
+          <span class="tag">OPTIONAL</span>
+        </div>
+
+        <div class="field">
+          <label for="topic">Topic / Product / Service</label>
+          <input type="text" id="topic" placeholder="e.g. GST billing software for freelancers">
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="count">Number of FAQs</label>
+            <select id="count">
+              <option value="3">3</option>
+              <option value="5" selected>5</option>
+              <option value="8">8</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tone">Tone</label>
+            <select id="tone">
+              <option value="simple, friendly Hinglish-aware">Simple &amp; Friendly</option>
+              <option value="formal and professional">Formal / Professional</option>
+              <option value="short and to-the-point">Short &amp; Direct</option>
+              <option value="detailed and SEO-optimized">Detailed / SEO</option>
+            </select>
+          </div>
+        </div>
+
+        <span class="advanced-toggle" id="advToggle">▸ Advanced: use your Anthropic API key</span>
+        <div class="advanced-box" id="advBox">
+          <div class="field">
+            <label for="apiKey">Anthropic API Key (kept in your browser only)</label>
+            <input type="password" id="apiKey" placeholder="sk-ant-...">
+          </div>
+          <p class="hint">Your key is used only in this browser to call the Anthropic API directly and is never sent anywhere else. Without a key, you can still build FAQs manually below. Get a key at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.</p>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="primary" id="generateBtn">✦ Generate FAQs with AI</button>
+          <button class="ghost" id="addManualBtn">+ Add FAQ manually</button>
+        </div>
+        <div class="status" id="genStatus"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>📋 Your FAQs</h3>
+          <span class="tag" id="faqCountTag">0 items</span>
+        </div>
+        <div id="faqList"></div>
+        <div class="empty-state" id="emptyState">No FAQs yet. Generate with AI or add one manually.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>👁 Live Preview</h3>
+          <span class="tag">Accordion</span>
+        </div>
+        <div id="previewArea">
+          <div class="empty-state">Preview will appear here as you add FAQs.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>⬇ Export</h3>
+          <span class="tag">Copy &amp; Paste Ready</span>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="html">HTML Widget</button>
+          <button class="tab-btn" data-tab="schema">Schema.org JSON-LD</button>
+          <button class="tab-btn" data-tab="text">Plain Text</button>
+        </div>
+        <pre id="exportOutput">Add at least one FAQ to see export code.</pre>
+        <div class="export-actions">
+          <button class="small" id="copyBtn">Copy Code</button>
+          <button class="small" id="downloadBtn">Download File</button>
+        </div>
+        <div class="status" id="exportStatus"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wrap">
+    <div class="ad-slot">AD SLOT — 336x280 — GOOGLE ADSENSE</div>
+
+    <div class="guide">
+      <h3>हिंदी में इस्तेमाल कैसे करें (How to use in Hindi)</h3>
+      <ol>
+        <li><strong>टॉपिक डालें:</strong> <span class="hin">ऊपर बॉक्स में अपने प्रोडक्ट या सर्विस का टॉपिक लिखें, जैसे "फ्रीलांसर के लिए GST बिलिंग"।</span></li>
+        <li><strong>AI से जनरेट करें:</strong> <span class="hin">अगर आपके पास Anthropic API key है तो "Advanced" में डालें और "Generate FAQs with AI" दबाएं — FAQs अपने आप बन जाएंगे। Key नहीं है तो नीचे "+ Add FAQ manually" से खुद सवाल-जवाब लिखें।</span></li>
+        <li><strong>प्रीव्यू देखें:</strong> <span class="hin">दाईं तरफ Live Preview में accordion पर क्लिक करके देखें कि आपकी वेबसाइट पर FAQ कैसा दिखेगा।</span></li>
+        <li><strong>कोड कॉपी करें:</strong> <span class="hin">"HTML Widget" टैब से कोड कॉपी करके अपनी वेबसाइट में पेस्ट करें, और "Schema.org JSON-LD" टैब से Google रिच रिजल्ट के लिए स्कीमा मार्कअप कॉपी करें।</span></li>
+        <li><strong>मुनेटाइज़ेशन टिप:</strong> <span class="hin">सही FAQ schema लगाने से Google सर्च में आपकी वेबसाइट rich result (dropdown FAQs) के साथ दिख सकती है, जिससे ज़्यादा क्लिक और ट्रैफिक मिलता है।</span></li>
+      </ol>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">IncomeAIHub &mdash; Free AI Tools for Indian Freelancers &amp; Creators</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  let faqs = [];
+  let activeTab = "html";
+
+  const $ = (id) => document.getElementById(id);
+
+  const faqList = $("faqList");
+  const emptyState = $("emptyState");
+  const faqCountTag = $("faqCountTag");
+  const previewArea = $("previewArea");
+  const exportOutput = $("exportOutput");
+  const genStatus = $("genStatus");
+  const exportStatus = $("exportStatus");
+
+  $("advToggle").addEventListener("click", function(){
+    const box = $("advBox");
+    box.classList.toggle("open");
+    this.textContent = (box.classList.contains("open") ? "▾ " : "▸ ") + "Advanced: use your Anthropic API key";
+  });
+
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+
+  function renderFaqList(){
+    faqList.innerHTML = "";
+    faqCountTag.textContent = faqs.length + " item" + (faqs.length===1?"":"s");
+    emptyState.style.display = faqs.length ? "none" : "block";
+
+    faqs.forEach(function(item, idx){
+      const card = document.createElement("div");
+      card.className = "faq-card";
+      card.innerHTML =
+        '<div class="faq-card-top">' +
+          '<span class="faq-index">FAQ ' + String(idx+1).padStart(2,"0") + '</span>' +
+          '<div class="faq-actions">' +
+            '<button class="small" data-act="up" data-idx="'+idx+'" '+(idx===0?"disabled":"")+'>↑</button>' +
+            '<button class="small" data-act="down" data-idx="'+idx+'" '+(idx===faqs.length-1?"disabled":"")+'>↓</button>' +
+            '<button class="small danger" data-act="del" data-idx="'+idx+'">Delete</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label>Question</label>' +
+          '<input type="text" data-field="q" data-idx="'+idx+'" value="'+escapeHtml(item.q)+'">' +
+        '</div>' +
+        '<div class="field" style="margin-bottom:0;">' +
+          '<label>Answer</label>' +
+          '<textarea data-field="a" data-idx="'+idx+'" rows="2">'+escapeHtml(item.a)+'</textarea>' +
+        '</div>';
+      faqList.appendChild(card);
+    });
+
+    renderPreview();
+    renderExport();
+  }
+
+  faqList.addEventListener("click", function(e){
+    const btn = e.target.closest("button[data-act]");
+    if(!btn) return;
+    const idx = parseInt(btn.dataset.idx,10);
+    const act = btn.dataset.act;
+    if(act === "del"){
+      faqs.splice(idx,1);
+    } else if(act === "up" && idx>0){
+      const tmp = faqs[idx-1]; faqs[idx-1] = faqs[idx]; faqs[idx] = tmp;
+    } else if(act === "down" && idx<faqs.length-1){
+      const tmp = faqs[idx+1]; faqs[idx+1] = faqs[idx]; faqs[idx] = tmp;
+    }
+    renderFaqList();
+  });
+
+  faqList.addEventListener("input", function(e){
+    const el = e.target.closest("[data-field]");
+    if(!el) return;
+    const idx = parseInt(el.dataset.idx,10);
+    const field = el.dataset.field;
+    faqs[idx][field] = el.value;
+    renderPreview();
+    renderExport();
+  });
+
+  $("addManualBtn").addEventListener("click", function(){
+    faqs.push({q:"", a:""});
+    renderFaqList();
+    const inputs = faqList.querySelectorAll('input[data-field="q"]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  });
+
+  function renderPreview(){
+    const valid = faqs.filter(function(f){ return f.q.trim(); });
+    if(!valid.length){
+      previewArea.innerHTML = '<div class="empty-state">Preview will appear here as you add FAQs.</div>';
+      return;
+    }
+    previewArea.innerHTML = valid.map(function(f, i){
+      return '<div class="accordion-item" data-i="'+i+'">' +
+        '<div class="accordion-q"><span>'+escapeHtml(f.q)+'</span><span class="chevron">+</span></div>' +
+        '<div class="accordion-a">'+escapeHtml(f.a || "(no answer yet)")+'</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  previewArea.addEventListener("click", function(e){
+    const item = e.target.closest(".accordion-item");
+    if(!item) return;
+    item.classList.toggle("open");
+  });
+
+  function buildHtmlWidget(){
+    const valid = faqs.filter(function(f){ return f.q.trim(); });
+    if(!valid.length) return "Add at least one FAQ to see export code.";
+    const items = valid.map(function(f){
+      return '  <div class="iah-faq-item">\n' +
+        '    <div class="iah-faq-q">' + escapeHtml(f.q) + '</div>\n' +
+        '    <div class="iah-faq-a">' + escapeHtml(f.a) + '</div>\n' +
+        '  </div>';
+    }).join("\n");
+
+    return '<!-- FAQ Widget generated with IncomeAIHub FAQ Generator -->\n' +
+'<div class="iah-faq">\n' + items + '\n</div>\n\n' +
+'<style>\n' +
+'.iah-faq{max-width:700px;margin:0 auto;font-family:sans-serif;}\n' +
+'.iah-faq-item{border:1px solid #ddd;border-radius:6px;margin-bottom:10px;overflow:hidden;}\n' +
+'.iah-faq-q{padding:14px 16px;font-weight:600;cursor:pointer;background:#f7f7f9;}\n' +
+'.iah-faq-a{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .2s ease,padding .2s ease;color:#444;}\n' +
+'.iah-faq-item.open .iah-faq-a{max-height:500px;padding:12px 16px 16px;}\n' +
+'</style>\n\n' +
+'<script>\n' +
+'document.querySelectorAll(".iah-faq-q").forEach(function(q){\n' +
+'  q.addEventListener("click", function(){\n' +
+'    q.parentElement.classList.toggle("open");\n' +
+'  });\n' +
+'});\n' +
+'<\/script>';
+  }
+
+  function buildSchema(){
+    const valid = faqs.filter(function(f){ return f.q.trim(); });
+    if(!valid.length) return "Add at least one FAQ to see export code.";
+    const schema = {
+      "@context":"https://schema.org",
+      "@type":"FAQPage",
+      "mainEntity": valid.map(function(f){
+        return {
+          "@type":"Question",
+          "name": f.q,
+          "acceptedAnswer": {
+            "@type":"Answer",
+            "text": f.a || ""
+          }
+        };
+      })
+    };
+    return '<script type="application/ld+json">\n' + JSON.stringify(schema, null, 2) + '\n<\/script>';
+  }
+
+  function buildPlainText(){
+    const valid = faqs.filter(function(f){ return f.q.trim(); });
+    if(!valid.length) return "Add at least one FAQ to see export code.";
+    return valid.map(function(f, i){
+      return "Q" + (i+1) + ": " + f.q + "\nA" + (i+1) + ": " + (f.a || "") ;
+    }).join("\n\n");
+  }
+
+  function renderExport(){
+    if(activeTab === "html") exportOutput.textContent = buildHtmlWidget();
+    else if(activeTab === "schema") exportOutput.textContent = buildSchema();
+    else exportOutput.textContent = buildPlainText();
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      activeTab = btn.dataset.tab;
+      renderExport();
+    });
+  });
+
+  $("copyBtn").addEventListener("click", function(){
+    const text = exportOutput.textContent;
+    navigator.clipboard.writeText(text).then(function(){
+      exportStatus.textContent = "Copied to clipboard.";
+      exportStatus.className = "status ok";
+      setTimeout(function(){ exportStatus.textContent=""; }, 2500);
+    }).catch(function(){
+      exportStatus.textContent = "Could not copy — select and copy manually.";
+      exportStatus.className = "status err";
+    });
+  });
+
+  $("downloadBtn").addEventListener("click", function(){
+    const text = exportOutput.textContent;
+    if(!text || text.indexOf("Add at least") === 0) return;
+    const ext = activeTab === "schema" ? "json" : (activeTab === "text" ? "txt" : "html");
+    const blob = new Blob([text], {type:"text/plain"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "faq-" + activeTab + "." + ext;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  $("generateBtn").addEventListener("click", async function(){
+    const topic = $("topic").value.trim();
+    const count = $("count").value;
+    const tone = $("tone").value;
+    const apiKey = $("apiKey").value.trim();
+
+    if(!topic){
+      genStatus.textContent = "Please enter a topic first.";
+      genStatus.className = "status err";
+      return;
+    }
+    if(!apiKey){
+      genStatus.textContent = "No API key entered — add one in Advanced, or use '+ Add FAQ manually' instead.";
+      genStatus.className = "status err";
+      return;
+    }
+
+    genStatus.textContent = "Generating FAQs with AI...";
+    genStatus.className = "status busy";
+    $("generateBtn").disabled = true;
+
+    try{
+      const prompt = "Generate exactly " + count + " frequently asked questions with answers about: \"" + topic + "\". " +
+        "Tone: " + tone + ". Audience: small business owners, freelancers, or creators in India. " +
+        "Answers should be 1-3 sentences, practical, and clear. " +
+        "Respond with ONLY a raw JSON array (no markdown, no code fences, no preamble) in this exact shape: " +
+        '[{"q":"question text","a":"answer text"}, ...]';
+
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1500,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      if(!response.ok){
+        const errBody = await response.text();
+        throw new Error("API error " + response.status + ": " + errBody.slice(0,200));
+      }
+
+      const data = await response.json();
+      const textBlock = (data.content || []).find(function(b){ return b.type === "text"; });
+      if(!textBlock) throw new Error("No text response from API.");
+
+      let clean = textBlock.text.trim().replace(/^```json/i,"").replace(/^```/,"").replace(/```$/,"").trim();
+      const parsed = JSON.parse(clean);
+
+      if(!Array.isArray(parsed) || !parsed.length) throw new Error("Unexpected response format.");
+
+      const newFaqs = parsed
+        .filter(function(item){ return item && item.q; })
+        .map(function(item){ return { q: String(item.q), a: String(item.a || "") }; });
+
+      faqs = faqs.concat(newFaqs);
+      renderFaqList();
+
+      genStatus.textContent = "Added " + newFaqs.length + " FAQs. Review and edit below.";
+      genStatus.className = "status ok";
+    } catch(err){
+      genStatus.textContent = "Generation failed: " + err.message;
+      genStatus.className = "status err";
+    } finally {
+      $("generateBtn").disabled = false;
+    }
+  });
+
+  renderFaqList();
+})();
+</script>
+</body>
+</html>
